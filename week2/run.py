@@ -7,7 +7,10 @@ from utils import *
 import time
 import numpy as np
 
-net = Net()
+# net = Net()
+# print(net)
+
+net = DR_GCN()
 print(net)
 
 
@@ -24,9 +27,12 @@ for epoch in range(50):
         t0 = time.time()
 
     net.train()
-    logits = net(g, features)
+    # logits = net(g, features)
+    logits,x_hat = net(g, features)
     logp = F.log_softmax(logits, 1)
-    loss = F.nll_loss(logp[train_mask], labels[train_mask])
+    # loss = F.nll_loss(logp[train_mask], labels[train_mask])
+    regulizer = nn.MSELoss(reduction='mean')
+    loss = F.nll_loss(logp[train_mask], labels[train_mask])+regulizer(x_hat[train_mask],features[train_mask])
 
     optimizer.zero_grad()
     loss.backward()
