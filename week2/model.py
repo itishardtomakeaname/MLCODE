@@ -29,3 +29,19 @@ class Net(nn.Module):
         x = F.relu(self.layer1(g, features))
         x = self.layer2(g, x)
         return x
+
+class DR_GCN(nn.Module):
+    def __init__(self):
+        super(DR_GCN, self).__init__()
+        self.layer1 = GCNLayer(1433, 128)
+        self.layer2 = GCNLayer(128, 7)
+        self.layer3 = GCNLayer(7, 1433)
+
+
+    def forward(self, g, features):
+        x = F.relu(self.layer1(g, features))
+        x = self.layer2(g, x)
+        pre_label = x
+        x = F.relu(x)
+        x = self.layer3(g, x)
+        return pre_label,x
